@@ -1,0 +1,27 @@
+{
+  "name": "zulkifrent-backend",
+  "version": "1.0.0",
+  "description": "Backend API untuk ZULKIFRENT - rental mobil, bus, motor",
+  "main": "src/server.js",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "nodemon src/server.js",
+    "migrate": "node src/db/migrate.js",
+    "build:frontend": "cd ../frontend && npm install && npm run build",
+    "build": "npm run build:frontend",
+    "postinstall": "npm run build:frontend"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "jsonwebtoken": "^9.0.2",
+    "multer": "^1.4.5-lts.1",
+    "mysql2": "^3.10.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.4"
+  }
+}
