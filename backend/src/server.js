@@ -20,11 +20,11 @@ app.use('/api', productRoutes);
 app.use('/api/cart', cartRoutes);
 app.use('/api/bookings', bookingRoutes);
 
-// ── Serve React Frontend (hasil build) ──────────────────
-const frontendBuild = path.join(__dirname, '../../frontend/dist');
+// ── Serve React Frontend (dari folder backend/public) ───
+const frontendBuild = path.join(__dirname, '../public');
 app.use(express.static(frontendBuild));
 
-// Semua route selain /api → kembalikan index.html (untuk React Router)
+// Semua route selain /api → kembalikan index.html
 app.get('*', (req, res) => {
   res.sendFile(path.join(frontendBuild, 'index.html'));
 });
@@ -35,7 +35,7 @@ app.use((err, req, res, next) => {
   res.status(500).json({ message: 'Terjadi kesalahan pada server.' });
 });
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`ZULKIFRENT berjalan di http://localhost:${PORT}`);
 });
