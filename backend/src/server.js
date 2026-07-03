@@ -3,6 +3,14 @@ const express = require('express');
 const cors = require('cors');
 const path = require('path');
 
+// ── Tangkap semua error supaya server tidak crash ────────
+process.on('unhandledRejection', (reason) => {
+  console.error('Unhandled Rejection:', reason);
+});
+process.on('uncaughtException', (error) => {
+  console.error('Uncaught Exception:', error);
+});
+
 const authRoutes = require('./routes/auth');
 const productRoutes = require('./routes/products');
 const cartRoutes = require('./routes/cart');
@@ -13,18 +21,25 @@ const app = express();
 app.use(cors({ origin: process.env.FRONTEND_URL || '*' }));
 app.use(express.json());
 
-// ── API Routes ──────────────────────────────────────────
-app.get('/api/health', (req, res) => res.json({ status: 'ok', service: 'zulkifrent-backend' }));
+// ── Health check + DB test ───────────────────────────────
+app.get('/api/health', async (req, res) => {
+  try {
+    const pool = require('./db/pool');
+    await pool.query('SELECT 1');
+    res.json({ status: 'ok', db: 'connected', service: 'zulkifrent-backend' });
+  } catch (err) {
+    res.json({ status: 'ok', db: 'ERROR: ' + err.message, service: 'zulkifrent-backend' });
+  }
+});
+
 app.use('/api/auth', authRoutes);
 app.use('/api', productRoutes);
 app.use('/api/cart', cartRoutes);
 app.use('/api/bookings', bookingRoutes);
 
-// ── Serve React Frontend (dari folder backend/public) ───
+// ── Serve React Frontend ─────────────────────────────────
 const frontendBuild = path.join(__dirname, '../public');
 app.use(express.static(frontendBuild));
-
-// Semua route selain /api → kembalikan index.html
 app.get('*', (req, res) => {
   res.sendFile(path.join(frontendBuild, 'index.html'));
 });
